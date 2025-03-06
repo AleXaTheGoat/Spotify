@@ -1,32 +1,47 @@
-function fetchPodcastEpisodes() {
-    const rssUrl = "https://anchor.fm/s/101758198/podcast/rss";
-    const proxyUrl = "https://corsproxy.io/?"; // Proxy per bypassare CORS
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimi episodi del podcast</title>
+</head>
+<body>
+    <h2>Ultimi episodi del podcast</h2>
+    <ul id="episodes"></ul>
+    
+    <script>
+        function fetchPodcastEpisodes() {
+            const rssUrl = "https://anchor.fm/s/101758198/podcast/rss";
+            const proxyUrl = "https://corsproxy.io/?"; // Proxy per evitare blocchi CORS
+            
+            fetch(proxyUrl + encodeURIComponent(rssUrl))
+                .then(response => response.text())
+                .then(str => {
+                    const parser = new DOMParser();
+                    const xmlDoc = parser.parseFromString(str, "text/xml");
 
-    fetch(proxyUrl + encodeURIComponent(rssUrl))
-        .then(response => response.text())
-        .then(str => {
-            const parser = new DOMParser();
-            const xmlDoc = parser.parseFromString(str, "text/xml");
+                    const items = xmlDoc.querySelectorAll("item");
+                    const episodesList = document.getElementById("episodes");
 
-            const items = xmlDoc.querySelectorAll("item");
-            const episodesList = document.getElementById("episodes");
+                    items.forEach(item => {
+                        const title = item.querySelector("title").textContent;
+                        const link = item.querySelector("link").textContent;
+                        
+                        const li = document.createElement("li");
+                        const a = document.createElement("a");
+                        a.href = link;
+                        a.textContent = title;
+                        a.target = "_blank";
+                        
+                        li.appendChild(a);
+                        episodesList.appendChild(li);
+                    });
+                })
+                .catch(error => console.error("Errore nel caricamento degli episodi:", error));
+        }
 
-            items.forEach(item => {
-                const title = item.querySelector("title").textContent;
-                const link = item.querySelector("link").textContent;
-
-                const li = document.createElement("li");
-                const a = document.createElement("a");
-                a.href = link;
-                a.textContent = title;
-                a.target = "_blank";
-
-                li.appendChild(a);
-                episodesList.appendChild(li);
-            });
-        })
-        .catch(error => console.error("Errore nel caricamento del feed:", error));
-}
-
-// Chiamare la funzione al caricamento della pagina
-document.addEventListener("DOMContentLoaded", fetchPodcastEpisodes);
+        // Esegui la funzione quando la pagina è caricata
+        document.addEventListener("DOMContentLoaded", fetchPodcastEpisodes);
+    </script>
+</body>
+</html>
