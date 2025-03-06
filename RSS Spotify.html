@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimi episodi del podcast</title>
+</head>
+<body>
+    <h2>Ultimi episodi del podcast</h2>
+    <ul id="episodi"></ul>
+    
+    <script>
+        function recuperaEpisodiPodcast() {
+            const urlRSS = "https://anchor.fm/s/101758198/podcast/rss";
+            const richiesta = new XMLHttpRequest();
+            
+            richiesta.open("GET", urlRSS, true);
+            richiesta.onreadystatechange = function () {
+                if (richiesta.readyState === 4 && richiesta.status === 200) {
+                    const parser = new DOMParser();
+                    const xmlDoc = parser.parseFromString(richiesta.responseText, "text/xml");
+                    
+                    const elementi = xmlDoc.querySelectorAll("item");
+                    const listaEpisodi = document.getElementById("episodi");
+                    
+                    elementi.forEach(elemento => {
+                        const titolo = elemento.querySelector("title").textContent;
+                        const link = elemento.querySelector("link").textContent;
+                        
+                        const elementoLista = document.createElement("li");
+                        const collegamento = document.createElement("a");
+                        collegamento.href = link;
+                        collegamento.textContent = titolo;
+                        collegamento.target = "_blank";
+                        
+                        elementoLista.appendChild(collegamento);
+                        listaEpisodi.appendChild(elementoLista);
+                    });
+                }
+            };
+            
+            richiesta.send();
+        }
+        
+        // Chiamare la funzione al caricamento della pagina
+        document.addEventListener("DOMContentLoaded", recuperaEpisodiPodcast);
+    </script>
+</body>
+</html>
