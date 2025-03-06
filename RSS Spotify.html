@@ -3,45 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimi episodi del podcast</title>
+    <title>RSS Podcast Link</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        a {
+            font-size: 20px;
+            color: #0073e6;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-    <h2>Ultimi episodi del podcast</h2>
-    <ul id="episodes"></ul>
-    
-    <script>
-        function fetchPodcastEpisodes() {
-            const rssUrl = "https://anchor.fm/s/101758198/podcast/rss";
-            const proxyUrl = "https://corsproxy.io/?"; // Proxy per evitare blocchi CORS
-            
-            fetch(proxyUrl + encodeURIComponent(rssUrl))
-                .then(response => response.text())
-                .then(str => {
-                    const parser = new DOMParser();
-                    const xmlDoc = parser.parseFromString(str, "text/xml");
-
-                    const items = xmlDoc.querySelectorAll("item");
-                    const episodesList = document.getElementById("episodes");
-
-                    items.forEach(item => {
-                        const title = item.querySelector("title").textContent;
-                        const link = item.querySelector("link").textContent;
-                        
-                        const li = document.createElement("li");
-                        const a = document.createElement("a");
-                        a.href = link;
-                        a.textContent = title;
-                        a.target = "_blank";
-                        
-                        li.appendChild(a);
-                        episodesList.appendChild(li);
-                    });
-                })
-                .catch(error => console.error("Errore nel caricamento degli episodi:", error));
-        }
-
-        // Esegui la funzione quando la pagina è caricata
-        document.addEventListener("DOMContentLoaded", fetchPodcastEpisodes);
-    </script>
+    <h1>Ascolta il Podcast</h1>
+    <p>Clicca sul link qui sotto per accedere al feed RSS del podcast:</p>
+    <p><a href="https://anchor.fm/s/101758198/podcast/rss" target="_blank">Vai al Podcast</a></p>
 </body>
 </html>
